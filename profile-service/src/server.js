@@ -7,7 +7,7 @@ const Redis = require("ioredis");
 const helmet = require("helmet");
 
 const profileRoutes = require("./routes/profile-route");
-const errorHandler = require("./middleware/errorHandler");
+const errorHandler = require("./middlewares/errorHandler");
 const logger = require("./utils/logger");
 const { connectRabbitMQ } = require("./utils/rabbitmq");
 

@@ -135,7 +135,26 @@ app.use(
             return proxyReqOpts
         },
         userResDecorator: async (proxyRes, proxyResData, userReq, userRes) => {
-            logger.info(`Response received from Post Service: ${proxyRes.statusCode}`);
+            logger.info(`Response received from Search Service: ${proxyRes.statusCode}`);
+            return proxyResData;
+        },
+    })
+);
+
+
+// setting up proxy for our search service
+app.use(
+    "/v1/profile",
+    validateToken,
+    proxy(process.env.PROFILE_SERVICE_URL, {
+        ...proxyOptions,
+        proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+            proxyReqOpts.headers["Content-Type"] = "application/json";
+            proxyReqOpts.headers['x-user-id'] = srcReq.user.userId
+            return proxyReqOpts
+        },
+        userResDecorator: async (proxyRes, proxyResData, userReq, userRes) => {
+            logger.info(`Response received from Profile Service: ${proxyRes.statusCode}`);
             return proxyResData;
         },
     })
@@ -152,5 +171,6 @@ app.listen(port, () => {
     logger.info(`Post service is running on port ${process.env.POST_SERVICE_URL}`);
     logger.info(`Media service is running on port ${process.env.MEDIA_SERVICE_URL}`);
     logger.info(`Search service is running on port ${process.env.SEARCH_SERVICE_URL}`);
+    logger.info(`Profile service is running on port ${process.env.PROFILE_SERVICE_URL}`);
     logger.info(`Redis url ${process.env.REDIS_URL}`);
 });
