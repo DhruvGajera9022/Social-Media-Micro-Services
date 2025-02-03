@@ -6,7 +6,7 @@ const cors = require("cors");
 const Redis = require("ioredis");
 const helmet = require("helmet");
 
-const postRoutes = require("./routes/post-routes");
+const profileRoutes = require("./routes/profile-route");
 const errorHandler = require("./middleware/errorHandler");
 const logger = require("./utils/logger");
 const { connectRabbitMQ } = require("./utils/rabbitmq");
@@ -40,14 +40,13 @@ app.use((req, res, next) => {
 });
 
 
-
 // routes
 app.use(
-    "/api/posts",
+    "/api/profile",
     (req, res, next) => {
         req.redisClient = redisClient
         next()
-    }, postRoutes);
+    }, profileRoutes);
 
 
 app.use(errorHandler);
@@ -59,7 +58,7 @@ const startServer = async () => {
 
         // start server
         app.listen(port, () => {
-            logger.info(`Post service running on port ${port}`);
+            logger.info(`Profile service running on port ${port}`);
         });
     } catch (error) {
         logger.error("Failed to connect to server", error);
