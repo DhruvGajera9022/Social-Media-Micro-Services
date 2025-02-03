@@ -3,6 +3,7 @@ const { validateRegistration, validateLogin, validateForgotPassword } = require(
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const RefreshToken = require("../models/RefreshToken");
+const argon2 = require("argon2");
 
 
 
@@ -170,8 +171,26 @@ const forgotPasswordUser = async (req, res) => {
             });
         }
 
-        const { password } = req.body;
+        const { email, password } = req.body;
 
+        // check user is exist or not
+        let user = await User.findOne({ email })
+        if (!user) {
+            logger.warn("User not found");
+            return res.status(400).json({
+                success: false,
+                message: "User not found, Please check credentials"
+            });
+        }
+
+        const hashedPassword = await argon2.hash(password);
+        await user.updateOne({ password: hashedPassword });
+
+        logger.warn("Password updated");
+        res.status(201).json({
+            success: true,
+            message: "Password Updated"
+        });
 
     } catch (error) {
         logger.error("Forgot Password error occurred", error);
