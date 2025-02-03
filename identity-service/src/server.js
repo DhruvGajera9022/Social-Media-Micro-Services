@@ -11,7 +11,7 @@ const { RedisStore } = require("rate-limit-redis");
 
 const logger = require("./utils/logger");
 const app = express();
-const routes = require("./routes/identity-service");
+const routes = require("./routes/identity-routes");
 const errorHandler = require("./middleware/errorHandler");
 
 const port = process.env.PORT;
