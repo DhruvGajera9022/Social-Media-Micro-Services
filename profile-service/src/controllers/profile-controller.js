@@ -7,6 +7,13 @@ const User = require("../model/User");
 const getProfile = async (req, res) => {
     logger.info("Get Profile endpoint hit...");
     try {
+        const cacheKey = "user:profile";
+        const cachedProfile = await req.redisClient.get(cacheKey);
+
+        if (cachedProfile) {
+            return res.json(JSON.parse(cachedProfile));
+        }
+
         const user = await User.findOne({ _id: req.user.userId });
         if (!user) {
             logger.warn("User not found");
@@ -15,6 +22,9 @@ const getProfile = async (req, res) => {
                 message: "User not found"
             });
         }
+
+        // save post in redis
+        await req.redisClient.setex(cacheKey, 300, JSON.stringify(user));
 
         logger.warn("Data found");
         res.status(201).json({

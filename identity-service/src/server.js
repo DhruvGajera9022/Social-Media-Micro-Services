@@ -11,7 +11,7 @@ const { RedisStore } = require("rate-limit-redis");
 
 const logger = require("./utils/logger");
 const app = express();
-const routes = require("./routes/identity-routes");
+const identityRoutes = require("./routes/identity-routes");
 const errorHandler = require("./middleware/errorHandler");
 
 const port = process.env.PORT;
@@ -85,8 +85,13 @@ const sensitiveEndpointsLimiter = rateLimit({
 app.use("/api/auth/register", sensitiveEndpointsLimiter);
 
 
-// Routes
-app.use("/api/auth", routes);
+// routes
+app.use(
+    "/api/auth",
+    (req, res, next) => {
+        req.redisClient = redisClient
+        next()
+    }, identityRoutes);
 
 
 // error handler

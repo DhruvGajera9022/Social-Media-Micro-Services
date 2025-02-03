@@ -12,6 +12,8 @@ const registerUser = async (req, res) => {
     logger.info('Registration endpoint hit...');
 
     try {
+        const cacheKey = "user:profile";
+
         // validate the input
         const { error } = validateRegistration(req.body);
         if (error) {
@@ -40,6 +42,9 @@ const registerUser = async (req, res) => {
 
         const { accessToken, refreshToken } = await generateToken(user);
 
+        // save post in redis
+        await req.redisClient.setex(cacheKey, 300, JSON.stringify(user));
+
         return res.status(201).json({
             success: true,
             message: "User registered successfully!",
@@ -60,6 +65,8 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     logger.info('Registration endpoint hit...');
     try {
+        const cacheKey = "user:profile";
+
         // validate input
         const { error } = validateLogin(req.body);
         if (error) {
@@ -93,6 +100,9 @@ const loginUser = async (req, res) => {
         }
 
         const { accessToken, refreshToken } = await generateToken(user);
+
+        // save post in redis
+        await req.redisClient.setex(cacheKey, 300, JSON.stringify(user));
 
         res.json({
             accessToken,
