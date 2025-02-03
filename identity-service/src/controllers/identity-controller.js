@@ -1,5 +1,5 @@
 const logger = require("../utils/logger");
-const { validateRegistration, validateLogin } = require("../utils/validation");
+const { validateRegistration, validateLogin, validateForgotPassword } = require("../utils/validation");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const RefreshToken = require("../models/RefreshToken");
@@ -157,6 +157,31 @@ const refreshTokenUser = async (req, res) => {
     }
 }
 
+// user forgot password
+const forgotPasswordUser = async (req, res) => {
+    logger.info("Forgot Password endpoint hit...");
+    try {
+        const { error } = validateForgotPassword(req.body);
+        if (error) {
+            logger.warn("Validation error", error.details[0].message)
+            return res.status(400).json({
+                success: false,
+                message: error.details[0].message
+            });
+        }
+
+        const { password } = req.body;
+
+
+    } catch (error) {
+        logger.error("Forgot Password error occurred", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+}
+
 // user logout
 const logoutUser = async (req, res) => {
     logger.info("Logout endpoint hit...");
@@ -192,5 +217,6 @@ module.exports = {
     registerUser,
     loginUser,
     refreshTokenUser,
+    forgotPasswordUser,
     logoutUser
 }
