@@ -3,7 +3,7 @@ const { validateForgotPassword } = require("../utils/validation");
 const User = require("../model/User");
 
 
-
+// get profile data
 const getProfile = async (req, res) => {
     logger.info("Get Profile endpoint hit...");
     try {
@@ -39,6 +39,9 @@ const getProfile = async (req, res) => {
         })
     }
 }
+
+
+
 
 
 
