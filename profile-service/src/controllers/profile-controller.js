@@ -3,7 +3,7 @@ const { validateProfile } = require("../utils/validation");
 const User = require("../model/User");
 
 
-const invalidatePostCache = async (req, input) => {
+const invalidateProfileCache = async (req, input) => {
 
     const cachedKey = `user:${input}`;
     await req.redisClient.del(cachedKey);
@@ -79,7 +79,7 @@ const editProfile = async (req, res) => {
 
         await user.updateOne({ username, email, mediaId });
 
-        await invalidatePostCache(req, user._id.toString());
+        await invalidateProfileCache(req, user._id.toString());
 
         logger.warn("Profile updated successfully");
         res.status(201).json({
