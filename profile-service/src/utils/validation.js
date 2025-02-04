@@ -1,10 +1,10 @@
 const Joi = require("joi");
 
 
-const validatePost = (data) => {
+const validateProfile = (data) => {
     const schema = Joi.object({
-        content: Joi.string().min(3).max(5000).required(),
-        mediaIds: Joi.array()
+        username: Joi.string().min(3).max(50).required(),
+        email: Joi.string().email().required(),
     })
 
     return schema.validate(data)
@@ -12,5 +12,5 @@ const validatePost = (data) => {
 
 
 module.exports = {
-    validatePost,
+    validateProfile,
 };
