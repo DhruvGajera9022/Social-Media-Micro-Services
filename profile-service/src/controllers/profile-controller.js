@@ -57,8 +57,6 @@ const getProfile = async (req, res) => {
 const editProfile = async (req, res) => {
     logger.info("Edit Profile endpoint hit...");
     try {
-        const cacheKey = "user:profile";
-
         const { error } = validateProfile(req.body);
         if (error) {
             logger.warn("Validation error", error.details[0].message)
@@ -68,7 +66,7 @@ const editProfile = async (req, res) => {
             });
         }
 
-        const { username, email } = req.body;
+        const { username, email, mediaId } = req.body;
 
         const user = await User.findOne({ _id: req.user.userId });
         if (!user) {
@@ -79,14 +77,14 @@ const editProfile = async (req, res) => {
             });
         }
 
-        await user.updateOne({ username, email });
+        await user.updateOne({ username, email, mediaId });
 
         await invalidatePostCache(req, user._id.toString());
 
         logger.warn("Profile updated successfully");
         res.status(201).json({
             success: true,
-            user
+            message: "Profile updated successfully"
         });
 
     } catch (error) {

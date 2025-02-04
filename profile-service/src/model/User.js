@@ -23,6 +23,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    mediaId: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now()
